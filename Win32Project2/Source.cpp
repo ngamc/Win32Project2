@@ -6,6 +6,8 @@ const wchar_t g_szClassName[] = L"myWindowClass";
 //test here
 //there
 // after adding branch firstbranch
+// 444444444
+// 555555555
 
 BOOL CALLBACK DialogProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
 {
