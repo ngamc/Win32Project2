@@ -3,11 +3,7 @@
 
 const wchar_t g_szClassName[] = L"myWindowClass";
 
-//test here
-//there
-// after adding branch firstbranch
-// 444444444
-// 555555555
+HWND g_hToolbar = NULL;
 
 BOOL CALLBACK DialogProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
 {
@@ -33,12 +29,54 @@ BOOL CALLBACK DialogProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
 	return TRUE;
 }
 
+BOOL CALLBACK ToolDlgProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
+{
+	switch (Message)
+	{
+	case WM_COMMAND:
+		switch (LOWORD(wParam))
+		{
+		case IDC_BUTTON1:
+			MessageBoxA(hwnd, "Hi!", "This is a message",
+				MB_OK | MB_ICONEXCLAMATION);
+			break;
+		case IDC_BUTTON2:
+			MessageBoxA(hwnd, "Bye!", "This is also a message",
+				MB_OK | MB_ICONEXCLAMATION);
+			break;
+		}
+		break;
+	case WM_CLOSE:
+		DestroyWindow(hwnd);
+		/*PostQuitMessage(0);*/
+		break;
+	default:
+		return FALSE;
+	}
+	return TRUE;
+}
+
 
 // Step 4: the Window Procedure
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	switch (msg)
 	{
+	case WM_CREATE:
+		g_hToolbar = CreateDialog(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_DIALOG1),
+			hwnd, ToolDlgProc);
+		if (g_hToolbar != NULL)
+		{
+			ShowWindow(g_hToolbar, SW_SHOW);
+		}
+		else
+		{
+			MessageBoxA(hwnd, "CreateDialog returned NULL", "Warning!",
+				MB_OK | MB_ICONINFORMATION);
+		}
+		break;
+
+
 	case WM_LBUTTONDOWN:
 	{
 		wchar_t szFileName[MAX_PATH];
@@ -53,6 +91,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	case WM_COMMAND:
 		switch (LOWORD(wParam))
 		{
+		
 		case ID_FILE_OPEN:
 			{
 				int ret = DialogBox(GetModuleHandle(NULL),
@@ -144,8 +183,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	// Step 3: The Message Loop
 	while (GetMessage(&Msg, NULL, 0, 0) > 0)
 	{
-		TranslateMessage(&Msg);
-		DispatchMessage(&Msg);
+		if (!IsDialogMessage(g_hToolbar, &Msg)) {
+			TranslateMessage(&Msg);
+			DispatchMessage(&Msg);
+		}
+
 	}
 	return Msg.wParam;
 }
