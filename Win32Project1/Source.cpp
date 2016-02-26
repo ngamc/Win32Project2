@@ -3,6 +3,8 @@
 #include <iostream>
 #include<string>
 #include <sstream>
+#include <gdiplus.h>
+using namespace Gdiplus;
 
 BOOL CALLBACK DialogProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) {
 	int getCount= SendDlgItemMessageA(hwnd, IDC_LIST1, LB_GETCOUNT, 0, 0);
@@ -100,6 +102,34 @@ BOOL CALLBACK DialogProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 	case WM_CLOSE:
 		DestroyWindow(hwnd);
 		break;
+	case WM_PAINT:
+	{
+		PAINTSTRUCT ps;
+		HDC hdc = BeginPaint(hwnd, &ps);
+		// TODO: Add any drawing code that uses hdc here...
+		//TextOutW(hdc, 0, 0, L"Hello, Windows!", 10);
+		
+		//GDI Way:
+		HPEN hPen;
+		HPEN hPenOld;
+		hPen = CreatePen(PS_SOLID, 3, RGB(255, 0, 0));
+		hPenOld = (HPEN)SelectObject(hdc, hPen);
+		MoveToEx(hdc, 20, 10, NULL);
+		LineTo(hdc, 200, 100);
+		SelectObject(hdc, hPenOld);
+		DeleteObject(hPen);
+
+		//GDI+ way:
+		//Graphics *myGraphics = new Graphics(hdc);
+		//Pen *myPen = new Pen(Color(255, 255, 0, 0), 3);
+		//hdc = BeginPaint(hwnd, &ps);
+		//myGraphics->DrawLine(myPen, 20, 10, 200, 100);
+		//delete myGraphics;
+		//delete myPen;
+		
+		EndPaint(hwnd, &ps);
+	}
+	break;
 	default:
 		return FALSE;
 	}
