@@ -6,6 +6,8 @@
 #include <gdiplus.h>
 using namespace Gdiplus;
 
+BOOL CALLBACK DialogProc2(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam);
+
 BOOL CALLBACK DialogProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) {
 	int getCount= SendDlgItemMessageA(hwnd, IDC_LIST1, LB_GETCOUNT, 0, 0);
 	SetDlgItemInt(hwnd, IDC_Showitemno, getCount,0);
@@ -97,6 +99,11 @@ BOOL CALLBACK DialogProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 			SendDlgItemMessageA(hwnd, IDC_LIST1, LB_RESETCONTENT, 0, 0);
 		}
 		break;
+		case IDC_Opennew: {
+			int ret = DialogBox(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_DIALOG2), hwnd, DialogProc2);
+
+		}
+		break;
 		}
 		break;
 	case WM_CLOSE:
@@ -130,6 +137,21 @@ BOOL CALLBACK DialogProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 		EndPaint(hwnd, &ps);
 	}
 	break;
+	default:
+		return FALSE;
+	}
+	return true;
+}
+
+BOOL CALLBACK DialogProc2(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) {
+	switch (Message) {
+	case WM_INITDIALOG:
+		return TRUE;
+	case WM_COMMAND:
+		break;
+	case WM_CLOSE:
+		EndDialog(hwnd,0);
+		break;
 	default:
 		return FALSE;
 	}
